@@ -4,6 +4,7 @@ use crate::{
 };
 mod color;
 mod ppm;
+mod ray;
 mod vec3;
 
 fn main() {
