@@ -1,3 +1,4 @@
+mod color;
 mod ppm;
 mod vec3;
 
