@@ -1,5 +1,6 @@
 use std::ops;
 
+#[derive(Copy, Clone)]
 pub struct Vec3 {
     pub x: f32,
     pub y: f32,
@@ -7,6 +8,7 @@ pub struct Vec3 {
 }
 
 pub type Point3 = Vec3;
+pub type Color = Vec3;
 
 impl Vec3 {
     fn len(&self) -> f32 {
