@@ -1,4 +1,5 @@
 mod ppm;
+mod vec3;
 
 fn main() {
     const W: i32 = 256;
