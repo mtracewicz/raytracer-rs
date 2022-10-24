@@ -1,4 +1,3 @@
-use crate::helpers::approximate_equals;
 use std::ops;
 
 #[derive(Copy, Clone)]
@@ -284,6 +283,8 @@ pub fn unit_vector(v: &Vec3) -> Vec3 {
 
 #[cfg(test)]
 mod tests {
+    use crate::helpers::assert_approximate_equals;
+
     use super::*;
 
     #[test]
@@ -294,24 +295,9 @@ mod tests {
             z: 3.0,
         };
         let r = unit_vector(&v);
-        assert!(
-            approximate_equals(r.x, 0.267261, 0.000001),
-            "Expected: {} Actual: {}",
-            0.267261,
-            r.x,
-        );
-        assert!(
-            approximate_equals(r.y, 0.534522, 0.000001),
-            "Expected: {} Actual: {}",
-            0.534522,
-            r.y,
-        );
-        assert!(
-            approximate_equals(r.z, 0.801784, 0.000001),
-            "Expected: {} Actual: {}",
-            0.801784,
-            r.z,
-        );
+        assert_approximate_equals(r.x, 0.267261, 0.000001);
+        assert_approximate_equals(r.y, 0.534522, 0.000001);
+        assert_approximate_equals(r.z, 0.801784, 0.000001);
     }
 
     #[test]
@@ -321,7 +307,7 @@ mod tests {
             y: 2.0,
             z: 2.0,
         };
-        assert!(approximate_equals(v.len(), 3.0, 0.0001));
+        assert_approximate_equals(v.len(), 3.0, 0.0001);
     }
 
     #[test]
