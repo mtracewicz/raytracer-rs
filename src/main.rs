@@ -33,13 +33,14 @@ fn main() {
         y: 0.0,
         z: 0.0,
     };
-    let lower_left_corner = &(&origin - &(&horizontal / 2.0))
-        - &(&(&vertical / 2.0)
-            - &Vec3 {
-                x: 0.0,
-                y: 0.0,
-                z: focal_length,
-            });
+    let lower_left_corner = &origin
+        - &horizontal / 2.0
+        - &vertical / 2.0
+        - Vec3 {
+            x: 0.0,
+            y: 0.0,
+            z: focal_length,
+        };
 
     let mut vec: Vec<Vec3> = vec![
         Color {
@@ -55,8 +56,7 @@ fn main() {
             let v = (j as f32) / ((image_height - 1) as f32);
             let r = Ray {
                 origin: origin,
-                direction: &(&lower_left_corner + &(u * &horizontal))
-                    + &(&(v * &vertical) - &origin),
+                direction: &lower_left_corner + u * &horizontal + v * &vertical - &origin,
             };
 
             let i = (image_width * (image_height - 1 - j) + i) as usize;

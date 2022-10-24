@@ -12,16 +12,16 @@ impl Ray {
     pub fn color(&self) -> Color {
         let unit_direction = unit_vector(&self.direction);
         let t = 0.5 * (unit_direction.y + 1.0);
-        &((1.0 - t)
-            * &Color {
+        (1.0 - t)
+            * Color {
                 x: 1.0,
                 y: 1.0,
                 z: 1.0,
-            })
-            + &(t * &Color {
+            }
+            + t * &Color {
                 x: 0.5,
                 y: 0.7,
                 z: 1.0,
-            })
+            }
     }
 }

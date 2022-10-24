@@ -24,7 +24,23 @@ impl ops::Div<f32> for &Vec3 {
     }
 }
 
+impl ops::Div<f32> for Vec3 {
+    type Output = Vec3;
+
+    fn div(self, rhs: f32) -> Self::Output {
+        self * (1.0 / rhs)
+    }
+}
+
 impl ops::Mul<f32> for &Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: f32) -> Self::Output {
+        rhs * self
+    }
+}
+
+impl ops::Mul<f32> for Vec3 {
     type Output = Vec3;
 
     fn mul(self, rhs: f32) -> Self::Output {
@@ -36,6 +52,18 @@ impl ops::Mul<&Vec3> for f32 {
     type Output = Vec3;
 
     fn mul(self, rhs: &Vec3) -> Self::Output {
+        Vec3 {
+            x: rhs.x * self,
+            y: rhs.y * self,
+            z: rhs.z * self,
+        }
+    }
+}
+
+impl ops::Mul<Vec3> for f32 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: Vec3) -> Self::Output {
         Vec3 {
             x: rhs.x * self,
             y: rhs.y * self,
@@ -56,7 +84,31 @@ impl ops::Div<&Vec3> for f32 {
     }
 }
 
+impl ops::Div<Vec3> for f32 {
+    type Output = Vec3;
+
+    fn div(self, rhs: Vec3) -> Self::Output {
+        Vec3 {
+            x: rhs.x / self,
+            y: rhs.y / self,
+            z: rhs.z / self,
+        }
+    }
+}
+
 impl ops::Neg for &Vec3 {
+    type Output = Vec3;
+
+    fn neg(self) -> Self::Output {
+        Vec3 {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+        }
+    }
+}
+
+impl ops::Neg for Vec3 {
     type Output = Vec3;
 
     fn neg(self) -> Self::Output {
@@ -104,6 +156,42 @@ impl ops::Mul<&Vec3> for &Vec3 {
     }
 }
 
+impl ops::Mul<Vec3> for Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: Vec3) -> Self::Output {
+        Vec3 {
+            x: self.x * rhs.x,
+            y: self.y * rhs.x,
+            z: self.z * rhs.z,
+        }
+    }
+}
+
+impl ops::Mul<Vec3> for &Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: Vec3) -> Self::Output {
+        Vec3 {
+            x: self.x * rhs.x,
+            y: self.y * rhs.x,
+            z: self.z * rhs.z,
+        }
+    }
+}
+
+impl ops::Mul<&Vec3> for Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: &Vec3) -> Self::Output {
+        Vec3 {
+            x: self.x * rhs.x,
+            y: self.y * rhs.x,
+            z: self.z * rhs.z,
+        }
+    }
+}
+
 impl ops::Add<&Vec3> for &Vec3 {
     type Output = Vec3;
 
@@ -116,10 +204,82 @@ impl ops::Add<&Vec3> for &Vec3 {
     }
 }
 
+impl ops::Add<Vec3> for Vec3 {
+    type Output = Vec3;
+
+    fn add(self, rhs: Vec3) -> Self::Output {
+        Vec3 {
+            x: self.x + rhs.x,
+            y: self.y + rhs.x,
+            z: self.z + rhs.z,
+        }
+    }
+}
+
+impl ops::Add<&Vec3> for Vec3 {
+    type Output = Vec3;
+
+    fn add(self, rhs: &Vec3) -> Self::Output {
+        Vec3 {
+            x: self.x + rhs.x,
+            y: self.y + rhs.x,
+            z: self.z + rhs.z,
+        }
+    }
+}
+
+impl ops::Add<Vec3> for &Vec3 {
+    type Output = Vec3;
+
+    fn add(self, rhs: Vec3) -> Self::Output {
+        Vec3 {
+            x: self.x + rhs.x,
+            y: self.y + rhs.x,
+            z: self.z + rhs.z,
+        }
+    }
+}
+
 impl ops::Sub<&Vec3> for &Vec3 {
     type Output = Vec3;
 
     fn sub(self, rhs: &Vec3) -> Self::Output {
+        Vec3 {
+            x: self.x - rhs.x,
+            y: self.y - rhs.x,
+            z: self.z - rhs.z,
+        }
+    }
+}
+
+impl ops::Sub<Vec3> for Vec3 {
+    type Output = Vec3;
+
+    fn sub(self, rhs: Vec3) -> Self::Output {
+        Vec3 {
+            x: self.x - rhs.x,
+            y: self.y - rhs.x,
+            z: self.z - rhs.z,
+        }
+    }
+}
+
+impl ops::Sub<&Vec3> for Vec3 {
+    type Output = Vec3;
+
+    fn sub(self, rhs: &Vec3) -> Self::Output {
+        Vec3 {
+            x: self.x - rhs.x,
+            y: self.y - rhs.x,
+            z: self.z - rhs.z,
+        }
+    }
+}
+
+impl ops::Sub<Vec3> for &Vec3 {
+    type Output = Vec3;
+
+    fn sub(self, rhs: Vec3) -> Self::Output {
         Vec3 {
             x: self.x - rhs.x,
             y: self.y - rhs.x,
