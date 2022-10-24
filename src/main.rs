@@ -5,6 +5,7 @@ use crate::{
     ppm::{generate_ppm, save_ppm},
     vec3::Color,
 };
+mod helpers;
 mod ppm;
 mod ray;
 mod vec3;
@@ -29,8 +30,8 @@ fn main() {
         z: 0.0,
     };
     let vertical = Vec3 {
-        x: viewport_height,
-        y: 0.0,
+        x: 0.0,
+        y: viewport_height,
         z: 0.0,
     };
     let lower_left_corner = &origin
@@ -58,7 +59,6 @@ fn main() {
                 origin: origin,
                 direction: &lower_left_corner + u * &horizontal + v * &vertical - &origin,
             };
-
             let i = (image_width * (image_height - 1 - j) + i) as usize;
             vec[i] = r.color();
         }

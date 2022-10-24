@@ -25,3 +25,45 @@ impl Ray {
             }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::helpers::approximate_equals;
+
+    use super::*;
+
+    #[test]
+    fn test_color() {
+        let r = Ray {
+            origin: Vec3 {
+                x: 0.0,
+                y: 0.0,
+                z: 0.0,
+            },
+            direction: Vec3 {
+                x: 1.0,
+                y: 2.0,
+                z: 3.0,
+            },
+        };
+        let res = r.color();
+        assert!(
+            approximate_equals(res.x, 0.616369, 0.000001),
+            "Expected: {}, Actual: {}",
+            0.616369,
+            res.x
+        );
+        assert!(
+            approximate_equals(res.y, 0.769822, 0.000001),
+            "Expected: {}, Actual: {}",
+            0.769822,
+            res.y
+        );
+        assert!(
+            approximate_equals(res.z, 1.0, 0.000001),
+            "Expected: {}, Actual: {}",
+            1.0,
+            res.z
+        );
+    }
+}

@@ -1,3 +1,4 @@
+use crate::helpers::approximate_equals;
 use std::ops;
 
 #[derive(Copy, Clone)]
@@ -7,46 +8,14 @@ pub struct Vec3 {
     pub z: f32,
 }
 
-pub type Point3 = Vec3;
-pub type Color = Vec3;
-
 impl Vec3 {
     fn len(&self) -> f32 {
         (self.x * self.x + self.y * self.y + self.z * self.z).sqrt()
     }
 }
 
-impl ops::Div<f32> for &Vec3 {
-    type Output = Vec3;
-
-    fn div(self, rhs: f32) -> Self::Output {
-        self * (1.0 / rhs)
-    }
-}
-
-impl ops::Div<f32> for Vec3 {
-    type Output = Vec3;
-
-    fn div(self, rhs: f32) -> Self::Output {
-        self * (1.0 / rhs)
-    }
-}
-
-impl ops::Mul<f32> for &Vec3 {
-    type Output = Vec3;
-
-    fn mul(self, rhs: f32) -> Self::Output {
-        rhs * self
-    }
-}
-
-impl ops::Mul<f32> for Vec3 {
-    type Output = Vec3;
-
-    fn mul(self, rhs: f32) -> Self::Output {
-        rhs * self
-    }
-}
+pub type Point3 = Vec3;
+pub type Color = Vec3;
 
 impl ops::Mul<&Vec3> for f32 {
     type Output = Vec3;
@@ -64,59 +33,23 @@ impl ops::Mul<Vec3> for f32 {
     type Output = Vec3;
 
     fn mul(self, rhs: Vec3) -> Self::Output {
-        Vec3 {
-            x: rhs.x * self,
-            y: rhs.y * self,
-            z: rhs.z * self,
-        }
+        self * &rhs
     }
 }
 
-impl ops::Div<&Vec3> for f32 {
+impl ops::Mul<f32> for &Vec3 {
     type Output = Vec3;
 
-    fn div(self, rhs: &Vec3) -> Self::Output {
-        Vec3 {
-            x: rhs.x / self,
-            y: rhs.y / self,
-            z: rhs.z / self,
-        }
+    fn mul(self, rhs: f32) -> Self::Output {
+        rhs * self
     }
 }
 
-impl ops::Div<Vec3> for f32 {
+impl ops::Mul<f32> for Vec3 {
     type Output = Vec3;
 
-    fn div(self, rhs: Vec3) -> Self::Output {
-        Vec3 {
-            x: rhs.x / self,
-            y: rhs.y / self,
-            z: rhs.z / self,
-        }
-    }
-}
-
-impl ops::Neg for &Vec3 {
-    type Output = Vec3;
-
-    fn neg(self) -> Self::Output {
-        Vec3 {
-            x: -self.x,
-            y: -self.y,
-            z: -self.z,
-        }
-    }
-}
-
-impl ops::Neg for Vec3 {
-    type Output = Vec3;
-
-    fn neg(self) -> Self::Output {
-        Vec3 {
-            x: -self.x,
-            y: -self.y,
-            z: -self.z,
-        }
+    fn mul(self, rhs: f32) -> Self::Output {
+        rhs * &self
     }
 }
 
@@ -125,22 +58,6 @@ impl ops::MulAssign<f32> for Vec3 {
         self.x *= rhs;
         self.y *= rhs;
         self.z *= rhs;
-    }
-}
-
-impl ops::DivAssign<f32> for Vec3 {
-    fn div_assign(&mut self, rhs: f32) {
-        self.x /= rhs;
-        self.y /= rhs;
-        self.z /= rhs;
-    }
-}
-
-impl ops::AddAssign<&Vec3> for Vec3 {
-    fn add_assign(&mut self, rhs: &Vec3) {
-        self.x += rhs.x;
-        self.y += rhs.y;
-        self.z += rhs.z;
     }
 }
 
@@ -168,18 +85,6 @@ impl ops::Mul<Vec3> for Vec3 {
     }
 }
 
-impl ops::Mul<Vec3> for &Vec3 {
-    type Output = Vec3;
-
-    fn mul(self, rhs: Vec3) -> Self::Output {
-        Vec3 {
-            x: self.x * rhs.x,
-            y: self.y * rhs.x,
-            z: self.z * rhs.z,
-        }
-    }
-}
-
 impl ops::Mul<&Vec3> for Vec3 {
     type Output = Vec3;
 
@@ -192,13 +97,79 @@ impl ops::Mul<&Vec3> for Vec3 {
     }
 }
 
+impl ops::Mul<Vec3> for &Vec3 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: Vec3) -> Self::Output {
+        Vec3 {
+            x: self.x * rhs.x,
+            y: self.y * rhs.x,
+            z: self.z * rhs.z,
+        }
+    }
+}
+
+impl ops::Div<f32> for &Vec3 {
+    type Output = Vec3;
+
+    fn div(self, rhs: f32) -> Self::Output {
+        self * (1.0 / rhs)
+    }
+}
+
+impl ops::Div<f32> for Vec3 {
+    type Output = Vec3;
+
+    fn div(self, rhs: f32) -> Self::Output {
+        &self / rhs
+    }
+}
+
+impl ops::DivAssign<f32> for Vec3 {
+    fn div_assign(&mut self, rhs: f32) {
+        *self *= 1.0 / rhs
+    }
+}
+
+impl ops::Neg for &Vec3 {
+    type Output = Vec3;
+
+    fn neg(self) -> Self::Output {
+        Vec3 {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+        }
+    }
+}
+
+impl ops::Neg for Vec3 {
+    type Output = Vec3;
+
+    fn neg(self) -> Self::Output {
+        Vec3 {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+        }
+    }
+}
+
+impl ops::AddAssign<&Vec3> for Vec3 {
+    fn add_assign(&mut self, rhs: &Vec3) {
+        self.x += rhs.x;
+        self.y += rhs.y;
+        self.z += rhs.z;
+    }
+}
+
 impl ops::Add<&Vec3> for &Vec3 {
     type Output = Vec3;
 
     fn add(self, rhs: &Vec3) -> Self::Output {
         Vec3 {
             x: self.x + rhs.x,
-            y: self.y + rhs.x,
+            y: self.y + rhs.y,
             z: self.z + rhs.z,
         }
     }
@@ -210,7 +181,7 @@ impl ops::Add<Vec3> for Vec3 {
     fn add(self, rhs: Vec3) -> Self::Output {
         Vec3 {
             x: self.x + rhs.x,
-            y: self.y + rhs.x,
+            y: self.y + rhs.y,
             z: self.z + rhs.z,
         }
     }
@@ -222,7 +193,7 @@ impl ops::Add<&Vec3> for Vec3 {
     fn add(self, rhs: &Vec3) -> Self::Output {
         Vec3 {
             x: self.x + rhs.x,
-            y: self.y + rhs.x,
+            y: self.y + rhs.y,
             z: self.z + rhs.z,
         }
     }
@@ -234,7 +205,7 @@ impl ops::Add<Vec3> for &Vec3 {
     fn add(self, rhs: Vec3) -> Self::Output {
         Vec3 {
             x: self.x + rhs.x,
-            y: self.y + rhs.x,
+            y: self.y + rhs.y,
             z: self.z + rhs.z,
         }
     }
@@ -246,7 +217,7 @@ impl ops::Sub<&Vec3> for &Vec3 {
     fn sub(self, rhs: &Vec3) -> Self::Output {
         Vec3 {
             x: self.x - rhs.x,
-            y: self.y - rhs.x,
+            y: self.y - rhs.y,
             z: self.z - rhs.z,
         }
     }
@@ -258,7 +229,7 @@ impl ops::Sub<Vec3> for Vec3 {
     fn sub(self, rhs: Vec3) -> Self::Output {
         Vec3 {
             x: self.x - rhs.x,
-            y: self.y - rhs.x,
+            y: self.y - rhs.y,
             z: self.z - rhs.z,
         }
     }
@@ -270,7 +241,7 @@ impl ops::Sub<&Vec3> for Vec3 {
     fn sub(self, rhs: &Vec3) -> Self::Output {
         Vec3 {
             x: self.x - rhs.x,
-            y: self.y - rhs.x,
+            y: self.y - rhs.y,
             z: self.z - rhs.z,
         }
     }
@@ -282,7 +253,7 @@ impl ops::Sub<Vec3> for &Vec3 {
     fn sub(self, rhs: Vec3) -> Self::Output {
         Vec3 {
             x: self.x - rhs.x,
-            y: self.y - rhs.x,
+            y: self.y - rhs.y,
             z: self.z - rhs.z,
         }
     }
@@ -309,4 +280,83 @@ pub fn dot_product(v1: &Vec3, v2: &Vec3) -> f32 {
 pub fn unit_vector(v: &Vec3) -> Vec3 {
     let l = v.len();
     v / l
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_unit_vector() {
+        let v = Vec3 {
+            x: 1.0,
+            y: 2.0,
+            z: 3.0,
+        };
+        let r = unit_vector(&v);
+        assert!(
+            approximate_equals(r.x, 0.267261, 0.000001),
+            "Expected: {} Actual: {}",
+            0.267261,
+            r.x,
+        );
+        assert!(
+            approximate_equals(r.y, 0.534522, 0.000001),
+            "Expected: {} Actual: {}",
+            0.534522,
+            r.y,
+        );
+        assert!(
+            approximate_equals(r.z, 0.801784, 0.000001),
+            "Expected: {} Actual: {}",
+            0.801784,
+            r.z,
+        );
+    }
+
+    #[test]
+    fn test_len() {
+        let v = Vec3 {
+            x: 1.0,
+            y: 2.0,
+            z: 2.0,
+        };
+        assert!(approximate_equals(v.len(), 3.0, 0.0001));
+    }
+
+    #[test]
+    fn f32_multiply_test() {
+        let mut v = Vec3 {
+            x: 1.0,
+            y: 2.0,
+            z: 3.0,
+        };
+        const F: f32 = 2.0;
+        let mut results = vec![v * F, F * v, &v * F, F * &v];
+        v *= F;
+        results.push(v);
+        for r in results {
+            assert_eq!(r.x, 2.0);
+            assert_eq!(r.y, 4.0);
+            assert_eq!(r.z, 6.0);
+        }
+    }
+
+    #[test]
+    fn f32_divide_test() {
+        let mut v = Vec3 {
+            x: 2.0,
+            y: 4.0,
+            z: 6.0,
+        };
+        const F: f32 = 2.0;
+        let mut results = vec![v / F, &v / F];
+        v /= F;
+        results.push(v);
+        for r in results {
+            assert_eq!(r.x, 1.0);
+            assert_eq!(r.y, 2.0);
+            assert_eq!(r.z, 3.0);
+        }
+    }
 }
