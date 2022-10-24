@@ -2,7 +2,7 @@ use std::{fs::File, io::Write};
 
 use crate::vec3::Color;
 
-pub fn generate_ppm(w: i32, h: i32, arr: &[Color]) -> String {
+pub fn generate_ppm(w: i32, h: i32, vec: &Vec<Color>) -> String {
     let mut result = String::from("P3\n");
     result.push_str(format!("{} {}\n", w, h).as_str());
     result.push_str("255\n");
@@ -10,7 +10,13 @@ pub fn generate_ppm(w: i32, h: i32, arr: &[Color]) -> String {
         for x in 0..w {
             let i = (w * y + x) as usize;
             result.push_str(
-                format!("{} {} {}\n", arr[i].x as u8, arr[i].y as u8, arr[i].z as u8).as_str(),
+                format!(
+                    "{} {} {}\n",
+                    (255.99 * vec[i].x) as u8,
+                    (255.99 * vec[i].y) as u8,
+                    (255.99 * vec[i].z) as u8
+                )
+                .as_str(),
             )
         }
     }
