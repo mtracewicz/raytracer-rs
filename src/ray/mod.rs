@@ -9,20 +9,31 @@ impl Ray {
     pub fn at(&self, t: f32) -> Point3 {
         &self.origin + &(t * &self.direction)
     }
+
     pub fn color(&self) -> Color {
-        if self.hit_sphere(
+        let t1 = self.hit_sphere(
             &Vec3 {
                 x: 0.0,
                 y: 0.0,
                 z: -1.0,
             },
             0.5,
-        ) {
-            return Color {
-                x: 1.0,
-                y: 0.0,
-                z: 0.0,
-            };
+        );
+        if t1 > 0.0 {
+            let n = unit_vector(
+                &(self.at(t1)
+                    - &Vec3 {
+                        x: 0.0,
+                        y: 0.0,
+                        z: -1.0,
+                    }),
+            );
+            return 0.5
+                * Color {
+                    x: n.x + 1.0,
+                    y: n.y + 1.0,
+                    z: n.z + 1.0,
+                };
         }
         let unit_direction = unit_vector(&self.direction);
         let t = 0.5 * (unit_direction.y + 1.0);
@@ -38,13 +49,18 @@ impl Ray {
                 z: 1.0,
             }
     }
-    fn hit_sphere(&self, center: &Point3, radius: f32) -> bool {
+
+    fn hit_sphere(&self, center: &Point3, radius: f32) -> f32 {
         let oc = self.origin - center;
         let a = dot_product(&self.direction, &self.direction);
         let b = 2.0 * dot_product(&oc, &self.direction);
         let c = dot_product(&oc, &oc) - radius * radius;
         let discriminant = b * b - 4.0 * a * c;
-        discriminant > 0.0
+        if discriminant < 0.0 {
+            return -1.0;
+        } else {
+            return (-b - discriminant.sqrt()) / (2.0 * a);
+        }
     }
 }
 

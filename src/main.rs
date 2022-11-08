@@ -56,7 +56,7 @@ fn main() {
             let u = (i as f32) / ((image_width - 1) as f32);
             let v = (j as f32) / ((image_height - 1) as f32);
             let r = Ray {
-                origin: origin,
+                origin,
                 direction: &lower_left_corner + u * &horizontal + v * &vertical - &origin,
             };
             let i = (image_width * (image_height - 1 - j) + i) as usize;
