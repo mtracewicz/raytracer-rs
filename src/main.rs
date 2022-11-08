@@ -11,8 +11,16 @@ mod ray;
 mod vec3;
 
 fn main() {
+    let args: Vec<String> = std::env::args().collect();
+    let image_width = if args.len() >= 1 {
+        match args[1].parse::<i32>() {
+            Ok(i) => i,
+            Err(_i) => 400,
+        }
+    } else {
+        400
+    };
     let aspect_ratio: f32 = 16.0 / 9.0;
-    let image_width = 400;
     let image_height = ((image_width as f32) / aspect_ratio) as i32;
 
     let viewport_height = 2.0;
