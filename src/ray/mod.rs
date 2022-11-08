@@ -1,4 +1,4 @@
-use crate::vec3::{unit_vector, Color, Point3, Vec3};
+use crate::vec3::{dot_product, unit_vector, Color, Point3, Vec3};
 
 pub struct Ray {
     pub origin: Point3,
@@ -10,6 +10,20 @@ impl Ray {
         &self.origin + &(t * &self.direction)
     }
     pub fn color(&self) -> Color {
+        if self.hit_sphere(
+            &Vec3 {
+                x: 0.0,
+                y: 0.0,
+                z: -1.0,
+            },
+            0.5,
+        ) {
+            return Color {
+                x: 1.0,
+                y: 0.0,
+                z: 0.0,
+            };
+        }
         let unit_direction = unit_vector(&self.direction);
         let t = 0.5 * (unit_direction.y + 1.0);
         (1.0 - t)
@@ -23,6 +37,14 @@ impl Ray {
                 y: 0.7,
                 z: 1.0,
             }
+    }
+    fn hit_sphere(&self, center: &Point3, radius: f32) -> bool {
+        let oc = self.origin - center;
+        let a = dot_product(&self.direction, &self.direction);
+        let b = 2.0 * dot_product(&oc, &self.direction);
+        let c = dot_product(&oc, &oc) - radius * radius;
+        let discriminant = b * b - 4.0 * a * c;
+        discriminant > 0.0
     }
 }
 
