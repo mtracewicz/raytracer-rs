@@ -12,7 +12,7 @@ mod vec3;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
-    let image_width = if args.len() >= 1 {
+    let image_width = if args.len() >= 2 {
         match args[1].parse::<i32>() {
             Ok(i) => i,
             Err(_i) => 400,
