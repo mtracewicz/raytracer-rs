@@ -59,16 +59,17 @@ fn main() {
         };
         (image_width * image_height) as usize
     ];
-    for j in (0..image_height).rev() {
-        for i in 0..image_width {
+
+    for i in 0..image_width {
+        for j in 0..image_height {
             let u = (i as f32) / ((image_width - 1) as f32);
             let v = (j as f32) / ((image_height - 1) as f32);
             let r = Ray {
                 origin,
                 direction: lower_left_corner + u * horizontal + v * vertical - origin,
             };
-            let i = (image_width * (image_height - 1 - j) + i) as usize;
-            vec[i] = r.color();
+            let index = (image_width * (image_height - j - 1) + i) as usize;
+            vec[index] = r.color();
         }
     }
     let result = generate_ppm(image_width, image_height, &vec);
