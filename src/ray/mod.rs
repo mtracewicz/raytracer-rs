@@ -16,12 +16,12 @@ impl Ray {
     pub fn color(&self, world: &Vec<Box<dyn Hittable>>) -> Color {
         if let Some(hit) = hit(world, self, 0.0, f32::MAX) {
             return 0.5
-                * hit.normal
-                * Color {
-                    x: 1.0,
-                    y: 1.0,
-                    z: 1.0,
-                };
+                * (hit.normal
+                    + Color {
+                        x: 1.0,
+                        y: 1.0,
+                        z: 1.0,
+                    });
         }
         let unit_direction = unit_vector(self.direction);
         let t = 0.5 * (unit_direction.y + 1.0);
