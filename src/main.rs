@@ -1,3 +1,4 @@
+use hittable::{Hittable, Sphere};
 use ray::Ray;
 use vec3::{Point3, Vec3};
 
@@ -6,6 +7,7 @@ use crate::{
     vec3::Color,
 };
 mod helpers;
+mod hittable;
 mod ppm;
 mod ray;
 mod vec3;
@@ -51,13 +53,32 @@ fn main() {
             z: focal_length,
         };
 
-    let mut vec: Vec<Vec3> = vec![
+    let mut pixels: Vec<Vec3> = vec![
         Color {
             x: 0.0,
             y: 0.0,
             z: 0.0,
         };
         (image_width * image_height) as usize
+    ];
+
+    let world: Vec<Box<dyn Hittable>> = vec![
+        Box::new(Sphere {
+            center: Point3 {
+                x: 0.0,
+                y: 0.0,
+                z: -1.0,
+            },
+            radius: 0.5,
+        }),
+        Box::new(Sphere {
+            center: Point3 {
+                x: 0.0,
+                y: -100.5,
+                z: -1.0,
+            },
+            radius: 100.0,
+        }),
     ];
 
     for i in 0..image_width {
@@ -69,10 +90,10 @@ fn main() {
                 direction: lower_left_corner + u * horizontal + v * vertical - origin,
             };
             let index = (image_width * (image_height - j - 1) + i) as usize;
-            vec[index] = r.color();
+            pixels[index] = r.color(&world);
         }
     }
-    let result = generate_ppm(image_width, image_height, &vec);
+    let result = generate_ppm(image_width, image_height, &pixels);
     match save_ppm(result.as_str()) {
         Ok(_r) => println!("File saved!"),
         Err(_e) => println!("Error saving the file"),

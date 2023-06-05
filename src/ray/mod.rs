@@ -1,4 +1,7 @@
-use crate::vec3::{dot_product, unit_vector, Color, Point3, Vec3};
+use crate::{
+    hittable::{hit, Hittable},
+    vec3::{unit_vector, Color, Point3, Vec3},
+};
 
 pub struct Ray {
     pub origin: Point3,
@@ -10,29 +13,14 @@ impl Ray {
         self.origin + (t * self.direction)
     }
 
-    pub fn color(&self) -> Color {
-        let t1 = self.hit_sphere(
-            Vec3 {
-                x: 0.0,
-                y: 0.0,
-                z: -1.0,
-            },
-            0.5,
-        );
-        if t1 > 0.0 {
-            let n = unit_vector(
-                self.at(t1)
-                    - Vec3 {
-                        x: 0.0,
-                        y: 0.0,
-                        z: -1.0,
-                    },
-            );
+    pub fn color(&self, world: &Vec<Box<dyn Hittable>>) -> Color {
+        if let Some(hit) = hit(world, self, 0.0, f32::MAX) {
             return 0.5
+                * hit.normal
                 * Color {
-                    x: n.x + 1.0,
-                    y: n.y + 1.0,
-                    z: n.z + 1.0,
+                    x: 1.0,
+                    y: 1.0,
+                    z: 1.0,
                 };
         }
         let unit_direction = unit_vector(self.direction);
@@ -48,19 +36,6 @@ impl Ray {
                 y: 0.7,
                 z: 1.0,
             }
-    }
-
-    fn hit_sphere(&self, center: Point3, radius: f32) -> f32 {
-        let oc = self.origin - center;
-        let a = dot_product(self.direction, self.direction);
-        let b = 2.0 * dot_product(oc, self.direction);
-        let c = dot_product(oc, oc) - radius * radius;
-        let discriminant = b * b - 4.0 * a * c;
-        if discriminant < 0.0 {
-            return -1.0;
-        } else {
-            return (-b - discriminant.sqrt()) / (2.0 * a);
-        }
     }
 }
 
