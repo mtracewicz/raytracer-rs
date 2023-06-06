@@ -71,7 +71,7 @@ pub fn hit(
     t_min: f32,
     t_max: f32,
 ) -> Option<HitRecord> {
-    let mut hitRecord = HitRecord {
+    let mut hit_record = HitRecord {
         p: Vec3 {
             x: 0.0,
             y: 0.0,
@@ -91,11 +91,11 @@ pub fn hit(
         if let Some(hit) = object.hit(&ray, t_min, closest_so_far) {
             hit_anything = true;
             closest_so_far = hit.t;
-            hitRecord = hit;
+            hit_record = hit;
         }
     }
     if hit_anything {
-        return Some(hitRecord);
+        return Some(hit_record);
     }
 
     None

@@ -1,11 +1,13 @@
+use camera::Camera;
+use helpers::random_f32;
 use hittable::{Hittable, Sphere};
-use ray::Ray;
 use vec3::{Point3, Vec3};
 
 use crate::{
     ppm::{generate_ppm, save_ppm},
     vec3::Color,
 };
+mod camera;
 mod helpers;
 mod hittable;
 mod ppm;
@@ -24,34 +26,8 @@ fn main() {
     };
     let aspect_ratio: f32 = 16.0 / 9.0;
     let image_height = ((image_width as f32) / aspect_ratio) as i32;
-
-    let viewport_height = 2.0;
-    let viewport_width = aspect_ratio * viewport_height;
-    let focal_length = 1.0;
-
-    let origin = Point3 {
-        x: 0.0,
-        y: 0.0,
-        z: 0.0,
-    };
-    let horizontal = Vec3 {
-        x: viewport_width,
-        y: 0.0,
-        z: 0.0,
-    };
-    let vertical = Vec3 {
-        x: 0.0,
-        y: viewport_height,
-        z: 0.0,
-    };
-    let lower_left_corner = origin
-        - horizontal / 2.0
-        - vertical / 2.0
-        - Vec3 {
-            x: 0.0,
-            y: 0.0,
-            z: focal_length,
-        };
+    let samples_per_pixel = 100;
+    let camera = Camera::new(aspect_ratio);
 
     let mut pixels: Vec<Vec3> = vec![
         Color {
@@ -83,17 +59,22 @@ fn main() {
 
     for i in 0..image_width {
         for j in 0..image_height {
-            let u = (i as f32) / ((image_width - 1) as f32);
-            let v = (j as f32) / ((image_height - 1) as f32);
-            let r = Ray {
-                origin,
-                direction: lower_left_corner + u * horizontal + v * vertical - origin,
+            let mut color = Color {
+                x: 0.0,
+                y: 0.0,
+                z: 0.0,
             };
             let index = (image_width * (image_height - j - 1) + i) as usize;
-            pixels[index] = r.color(&world);
+            for _ in 0..samples_per_pixel {
+                let u = ((i as f32) + random_f32()) / ((image_width - 1) as f32);
+                let v = ((j as f32) + random_f32()) / ((image_height - 1) as f32);
+                let r = camera.get_ray(u, v);
+                color += &r.color(&world);
+            }
+            pixels[index] = color;
         }
     }
-    let result = generate_ppm(image_width, image_height, &pixels);
+    let result = generate_ppm(image_width, image_height, &pixels, samples_per_pixel);
     match save_ppm(result.as_str()) {
         Ok(_r) => println!("File saved!"),
         Err(_e) => println!("Error saving the file"),
