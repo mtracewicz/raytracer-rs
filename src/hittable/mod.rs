@@ -65,12 +65,13 @@ impl Hittable for Sphere {
     }
 }
 
-pub fn hit(
-    objects: &Vec<Box<dyn Hittable>>,
-    ray: &Ray,
-    t_min: f32,
-    t_max: f32,
-) -> Option<HitRecord> {
+impl Hittable for Box<dyn Hittable> {
+    fn hit(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
+        (**self).hit(ray, t_min, t_max)
+    }
+}
+
+pub fn hit(objects: &[impl Hittable], ray: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
     let mut hit_record = HitRecord {
         p: Vec3 {
             x: 0.0,

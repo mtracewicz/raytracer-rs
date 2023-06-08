@@ -13,7 +13,7 @@ impl Ray {
         self.origin + (t * self.direction)
     }
 
-    pub fn color(&self, world: &Vec<Box<dyn Hittable>>) -> Color {
+    pub fn color(&self, world: &[impl Hittable]) -> Color {
         if let Some(hit) = hit(world, self, 0.0, f32::MAX) {
             return 0.5
                 * (hit.normal
