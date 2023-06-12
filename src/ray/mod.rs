@@ -1,5 +1,5 @@
 use crate::{
-    helpers::{random_in_unit_sphere, random_unit_vector},
+    helpers::{random_in_hemisphere, random_in_unit_sphere, random_unit_vector},
     hittable::{hit, Hittable},
     vec3::{unit_vector, Color, Point3, Vec3},
 };
@@ -23,7 +23,7 @@ impl Ray {
             };
         }
         if let Some(hit) = hit(world, self, 0.001, f32::MAX) {
-            let target = hit.p + hit.normal + random_unit_vector();
+            let target = hit.p + random_in_hemisphere(hit.normal);
             return 0.5
                 * Ray {
                     origin: hit.p,
