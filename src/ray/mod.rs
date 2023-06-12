@@ -1,4 +1,5 @@
 use crate::{
+    helpers::random_in_unit_sphere,
     hittable::{hit, Hittable},
     vec3::{unit_vector, Color, Point3, Vec3},
 };
@@ -13,15 +14,22 @@ impl Ray {
         self.origin + (t * self.direction)
     }
 
-    pub fn color(&self, world: &[impl Hittable]) -> Color {
+    pub fn color(&self, world: &[impl Hittable], depth: i32) -> Color {
+        if depth <= 0 {
+            return Color {
+                x: 0.0,
+                y: 0.0,
+                z: 0.0,
+            };
+        }
         if let Some(hit) = hit(world, self, 0.0, f32::MAX) {
+            let target = hit.p + hit.normal + random_in_unit_sphere();
             return 0.5
-                * (hit.normal
-                    + Color {
-                        x: 1.0,
-                        y: 1.0,
-                        z: 1.0,
-                    });
+                * Ray {
+                    origin: hit.p,
+                    direction: target - hit.p,
+                }
+                .color(world, depth - 1);
         }
         let unit_direction = unit_vector(self.direction);
         let t = 0.5 * (unit_direction.y + 1.0);

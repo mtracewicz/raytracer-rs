@@ -3,6 +3,7 @@ use crate::{
     vec3::{Point3, Vec3},
 };
 
+#[derive(Copy, Clone)]
 pub struct Camera {
     pub origin: Point3,
     pub lower_left_corner: Point3,

@@ -1,7 +1,12 @@
+use std::{
+    sync::{Arc, Mutex},
+    thread::available_parallelism,
+};
+
 use camera::Camera;
 use helpers::random_f32;
 use hittable::{Hittable, Sphere};
-use vec3::{Point3, Vec3};
+use vec3::Point3;
 
 use crate::{
     ppm::{generate_ppm, save_ppm},
@@ -28,17 +33,18 @@ fn main() {
     let image_height = ((image_width as f32) / aspect_ratio) as i32;
     let samples_per_pixel = 100;
     let camera = Camera::new(aspect_ratio);
+    let max_depth = 50;
 
-    let mut pixels: Vec<Vec3> = vec![
+    let pixels = Arc::new(Mutex::new(vec![
         Color {
             x: 0.0,
             y: 0.0,
             z: 0.0,
         };
         (image_width * image_height) as usize
-    ];
+    ]));
 
-    let world: Vec<Box<dyn Hittable>> = vec![
+    let world: Arc<Vec<Box<dyn Hittable + Sync + Send>>> = Arc::new(vec![
         Box::new(Sphere {
             center: Point3 {
                 x: 0.0,
@@ -55,26 +61,41 @@ fn main() {
             },
             radius: 100.0,
         }),
-    ];
+    ]);
 
+    let mut handlers = vec![];
+    let threads = available_parallelism().unwrap().get() as i32;
+    let work_per_thread = image_height / threads;
     for i in 0..image_width {
-        for j in 0..image_height {
-            let mut color = Color {
-                x: 0.0,
-                y: 0.0,
-                z: 0.0,
-            };
-            let index = (image_width * (image_height - j - 1) + i) as usize;
-            for _ in 0..samples_per_pixel {
-                let u = ((i as f32) + random_f32()) / ((image_width - 1) as f32);
-                let v = ((j as f32) + random_f32()) / ((image_height - 1) as f32);
-                let r = camera.get_ray(u, v);
-                color += &r.color(&world);
-            }
-            pixels[index] = color;
+        for t in 0..threads {
+            let world_for_thread = Arc::clone(&world);
+            let pixel_for_thread = Arc::clone(&pixels);
+            handlers.push(std::thread::spawn(move || {
+                for j in t * work_per_thread..(t + 1) * work_per_thread {
+                    let mut color = Color {
+                        x: 0.0,
+                        y: 0.0,
+                        z: 0.0,
+                    };
+                    let index = (image_width * (image_height - j - 1) + i) as usize;
+                    for _ in 0..samples_per_pixel {
+                        let u = ((i as f32) + random_f32()) / ((image_width - 1) as f32);
+                        let v = ((j as f32) + random_f32()) / ((image_height - 1) as f32);
+                        let r = camera.get_ray(u, v);
+                        color += &r.color(&world_for_thread, max_depth);
+                    }
+                    let mut pixels_to_edit = pixel_for_thread.lock().unwrap();
+                    pixels_to_edit[index] = color;
+                }
+            }));
+        }
+
+        while handlers.len() > 0 {
+            handlers.pop().unwrap();
         }
     }
-    let result = generate_ppm(image_width, image_height, &pixels, samples_per_pixel);
+    let pixels_to_use = pixels.lock().unwrap();
+    let result = generate_ppm(image_width, image_height, &pixels_to_use, samples_per_pixel);
     match save_ppm(result.as_str()) {
         Ok(_r) => println!("File saved!"),
         Err(_e) => println!("Error saving the file"),

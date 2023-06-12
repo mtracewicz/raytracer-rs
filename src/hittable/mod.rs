@@ -65,7 +65,7 @@ impl Hittable for Sphere {
     }
 }
 
-impl Hittable for Box<dyn Hittable> {
+impl Hittable for Box<dyn Hittable + Sync + Send> {
     fn hit(&self, ray: &Ray, t_min: f32, t_max: f32) -> Option<HitRecord> {
         (**self).hit(ray, t_min, t_max)
     }
