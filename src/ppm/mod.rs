@@ -10,9 +10,9 @@ pub fn generate_ppm(w: i32, h: i32, vec: &Vec<Color>, samples_per_pixel: i32) ->
     for y in 0..h {
         for x in 0..w {
             let i = (w * y + x) as usize;
-            let r = vec[i].x * scale;
-            let g = vec[i].y * scale;
-            let b = vec[i].z * scale;
+            let r = (vec[i].x * scale).sqrt();
+            let g = (vec[i].y * scale).sqrt();
+            let b = (vec[i].z * scale).sqrt();
             result.push_str(
                 format!(
                     "{} {} {}\n",

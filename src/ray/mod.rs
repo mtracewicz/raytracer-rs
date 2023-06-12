@@ -22,7 +22,7 @@ impl Ray {
                 z: 0.0,
             };
         }
-        if let Some(hit) = hit(world, self, 0.0, f32::MAX) {
+        if let Some(hit) = hit(world, self, 0.001, f32::MAX) {
             let target = hit.p + hit.normal + random_in_unit_sphere();
             return 0.5
                 * Ray {
