@@ -1,4 +1,5 @@
 use std::{
+    error,
     sync::{Arc, Mutex},
     thread::available_parallelism,
 };
@@ -19,7 +20,7 @@ mod ppm;
 mod ray;
 mod vec3;
 
-fn main() {
+fn main() -> Result<(), Box<dyn error::Error>> {
     let args: Vec<String> = std::env::args().collect();
     let image_width = if args.len() >= 2 {
         match args[1].parse::<i32>() {
@@ -64,7 +65,7 @@ fn main() {
     ]);
 
     let mut handlers = vec![];
-    let threads = available_parallelism().unwrap().get() as i32;
+    let threads = available_parallelism()?.get() as i32;
     let work_per_thread = image_height / threads;
     for i in 0..image_width {
         for t in 0..threads {
@@ -91,7 +92,9 @@ fn main() {
         }
 
         while handlers.len() > 0 {
-            handlers.pop().unwrap();
+            if let Some(handler) = handlers.pop() {
+                handler.join().unwrap();
+            }
         }
     }
     let pixels_to_use = pixels.lock().unwrap();
@@ -100,4 +103,5 @@ fn main() {
         Ok(_r) => println!("File saved!"),
         Err(_e) => println!("Error saving the file"),
     }
+    Ok(())
 }
