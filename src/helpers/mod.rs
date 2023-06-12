@@ -1,4 +1,4 @@
-use crate::vec3::Vec3;
+use crate::vec3::{unit_vector, Vec3};
 
 fn approximate_equals(x: f32, y: f32, d: f32) -> bool {
     y - d <= x && x <= y + d
@@ -42,6 +42,10 @@ pub fn random_in_unit_sphere() -> Vec3 {
         }
         break v;
     }
+}
+
+pub fn random_unit_vector() -> Vec3 {
+    unit_vector(random_in_unit_sphere())
 }
 
 pub fn clamp(x: f32, min: f32, max: f32) -> f32 {
