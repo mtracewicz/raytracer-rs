@@ -1,6 +1,6 @@
 pub mod material {
     use crate::{
-        helpers::{random_in_unit_sphere, random_unit_vector},
+        helpers::{random_in_hemisphere, random_in_unit_sphere, random_unit_vector},
         hittable::HitRecord,
         ray::Ray,
         vec3::{dot_product, reflect, unit_vector, Color},
@@ -18,7 +18,7 @@ pub mod material {
 
     impl Material for Lambertian {
         fn scatter(&self, ray: &Ray, hit_record: &HitRecord) -> Option<(Color, Ray)> {
-            let mut scatter_direction = hit_record.normal + random_unit_vector();
+            let mut scatter_direction = hit_record.normal + random_in_hemisphere(hit_record.normal);
             if scatter_direction.near_zero() {
                 scatter_direction = hit_record.normal;
             }
