@@ -1,6 +1,6 @@
 pub mod material {
     use crate::{
-        helpers::{random_in_hemisphere, random_in_unit_sphere, random_unit_vector},
+        helpers::{random_in_hemisphere, random_in_unit_sphere},
         hittable::HitRecord,
         ray::Ray,
         vec3::{dot_product, reflect, unit_vector, Color},

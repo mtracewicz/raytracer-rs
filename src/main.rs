@@ -8,12 +8,9 @@ use camera::Camera;
 use helpers::random_f32;
 use hittable::{Hittable, Sphere};
 use material::material::{Lambertian, Material, Metal};
-use vec3::Point3;
+use vec3::{Color, Point3};
 
-use crate::{
-    ppm::{generate_ppm, save_ppm},
-    vec3::Color,
-};
+use crate::ppm::{generate_ppm, save_ppm};
 mod camera;
 mod helpers;
 mod hittable;

@@ -1,19 +1,5 @@
 use crate::vec3::{dot_product, unit_vector, Vec3};
 
-fn approximate_equals(x: f32, y: f32, d: f32) -> bool {
-    y - d <= x && x <= y + d
-}
-
-pub fn assert_approximate_equals(expected: f32, actual: f32, delta: f32) {
-    assert!(
-        approximate_equals(expected, actual, delta),
-        "Expected: {}, Actual: {}, Delta: {}",
-        expected,
-        actual,
-        delta
-    )
-}
-
 pub fn degrees_to_radians(degrees: f32) -> f32 {
     degrees * std::f32::consts::PI / 180.0
 }
