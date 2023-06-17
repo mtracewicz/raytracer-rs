@@ -1,5 +1,7 @@
 use std::ops;
 
+use crate::helpers::random_f32;
+
 #[derive(Copy, Clone)]
 pub struct Vec3 {
     pub x: f32,
@@ -19,6 +21,14 @@ impl Vec3 {
     pub fn near_zero(&self) -> bool {
         let error = 1e-8;
         self.x.abs() < error && self.y.abs() < error && self.z.abs() < error
+    }
+
+    pub fn random() -> Vec3 {
+        Vec3 {
+            x: random_f32(),
+            y: random_f32(),
+            z: random_f32(),
+        }
     }
 }
 
