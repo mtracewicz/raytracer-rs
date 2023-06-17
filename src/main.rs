@@ -8,7 +8,7 @@ use camera::Camera;
 use helpers::random_f32;
 use hittable::{Hittable, Sphere};
 use material::{Dielectric, Lambertian, Material, Metal};
-use vec3::{Color, Point3};
+use vec3::{Color, Point3, Vec3};
 
 use crate::ppm::{generate_ppm, save_ppm};
 mod camera;
@@ -32,7 +32,25 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     let aspect_ratio: f32 = 16.0 / 9.0;
     let image_height = ((image_width as f32) / aspect_ratio) as i32;
     let samples_per_pixel = 100;
-    let camera = Camera::new(aspect_ratio);
+    let camera = Camera::new(
+        Point3 {
+            x: -2.0,
+            y: 2.0,
+            z: 1.0,
+        },
+        Point3 {
+            x: 0.0,
+            y: 0.0,
+            z: -1.0,
+        },
+        Vec3 {
+            x: 0.0,
+            y: 1.0,
+            z: 0.0,
+        },
+        90.0,
+        aspect_ratio,
+    );
     let max_depth = 50;
 
     let pixels = Arc::new(Mutex::new(vec![
