@@ -7,7 +7,7 @@ use std::{
 use camera::Camera;
 use helpers::random_f32;
 use hittable::{Hittable, Sphere};
-use material::material::{Lambertian, Material, Metal};
+use material::{Dielectric, Lambertian, Material, Metal};
 use vec3::{Color, Point3};
 
 use crate::ppm::{generate_ppm, save_ppm};
@@ -53,19 +53,13 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     }));
     let material_center: Arc<Box<dyn Material + Send + Sync>> = Arc::new(Box::new(Lambertian {
         albedo: Color {
-            x: 0.7,
-            y: 0.7,
-            z: 0.3,
+            x: 0.1,
+            y: 0.2,
+            z: 0.5,
         },
     }));
-    let material_left: Arc<Box<dyn Material + Send + Sync>> = Arc::new(Box::new(Metal {
-        albedo: Color {
-            x: 0.8,
-            y: 0.8,
-            z: 0.8,
-        },
-        fuzzines: 0.3,
-    }));
+    let material_left: Arc<Box<dyn Material + Send + Sync>> =
+        Arc::new(Box::new(Dielectric { ir: 1.5 }));
     let material_right: Arc<Box<dyn Material + Send + Sync>> = Arc::new(Box::new(Metal {
         albedo: Color {
             x: 0.8,

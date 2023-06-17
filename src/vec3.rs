@@ -21,8 +21,16 @@ impl Vec3 {
         self.x.abs() < error && self.y.abs() < error && self.z.abs() < error
     }
 }
-pub fn reflect(v: &Vec3, n: &Vec3) -> Vec3 {
-    *v - 2.0 * dot_product(*v, *n) * *n
+
+pub fn reflect(v: Vec3, n: Vec3) -> Vec3 {
+    v - 2.0 * dot_product(v, n) * n
+}
+
+pub fn refract(uv: Vec3, n: Vec3, etai_over_etat: f32) -> Vec3 {
+    let cos_theta = dot_product(-uv, n).min(1.0);
+    let r_out_perp = etai_over_etat * (uv + cos_theta * n);
+    let r_out_parallel = -((1.0 - r_out_perp.len_squared()).abs()).sqrt() * n;
+    return r_out_perp + r_out_parallel;
 }
 
 pub type Point3 = Vec3;

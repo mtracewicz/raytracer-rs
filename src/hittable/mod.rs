@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use crate::{
-    material::material::Material,
+    material::Material,
     ray::Ray,
     vec3::{dot_product, Point3, Vec3},
 };
