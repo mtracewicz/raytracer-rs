@@ -1,4 +1,7 @@
+use std::sync::Arc;
+
 use crate::{
+    material::material::Material,
     ray::Ray,
     vec3::{dot_product, Point3, Vec3},
 };
@@ -8,6 +11,7 @@ pub struct HitRecord {
     pub normal: Vec3,
     pub t: f32,
     pub front_face: bool,
+    pub material: Option<Arc<Box<dyn Material + Send + Sync>>>,
 }
 impl HitRecord {
     fn set_face_normal(&mut self, ray: &Ray, outward_normal: Vec3) {
@@ -19,12 +23,19 @@ impl HitRecord {
         };
     }
 
-    fn new(p: Point3, t: f32, ray: &Ray, outward_normal: Vec3) -> HitRecord {
+    fn new(
+        p: Point3,
+        t: f32,
+        ray: &Ray,
+        outward_normal: Vec3,
+        material: Arc<Box<dyn Material + Send + Sync>>,
+    ) -> HitRecord {
         let mut rec = HitRecord {
             p,
             normal: outward_normal,
             t,
             front_face: false,
+            material: Some(material),
         };
         rec.set_face_normal(ray, outward_normal);
         return rec;
@@ -38,6 +49,7 @@ pub trait Hittable {
 pub struct Sphere {
     pub center: Point3,
     pub radius: f32,
+    pub material: Arc<Box<dyn Material + Send + Sync>>,
 }
 
 impl Hittable for Sphere {
@@ -61,7 +73,13 @@ impl Hittable for Sphere {
 
         let n = ray.at(root);
         let outward_normal = (n - self.center) / self.radius;
-        return Some(HitRecord::new(n, root, &ray, outward_normal));
+        return Some(HitRecord::new(
+            n,
+            root,
+            &ray,
+            outward_normal,
+            Arc::clone(&self.material),
+        ));
     }
 }
 
@@ -85,6 +103,7 @@ pub fn hit(objects: &[impl Hittable], ray: &Ray, t_min: f32, t_max: f32) -> Opti
         },
         t: 0.0,
         front_face: false,
+        material: None,
     };
     let mut hit_anything = false;
     let mut closest_so_far = t_max;

@@ -1,5 +1,4 @@
 use crate::{
-    helpers::{random_in_hemisphere, random_in_unit_sphere, random_unit_vector},
     hittable::{hit, Hittable},
     vec3::{unit_vector, Color, Point3, Vec3},
 };
@@ -23,13 +22,16 @@ impl Ray {
             };
         }
         if let Some(hit) = hit(world, self, 0.001, f32::MAX) {
-            let target = hit.p + random_in_hemisphere(hit.normal);
-            return 0.5
-                * Ray {
-                    origin: hit.p,
-                    direction: target - hit.p,
-                }
-                .color(world, depth - 1);
+            let material = &hit.material.clone().unwrap();
+            if let Some(scatter) = (*material).scatter(self, &hit) {
+                return scatter.0 * scatter.1.color(world, depth - 1);
+            } else {
+                return Color {
+                    x: 0.0,
+                    y: 0.0,
+                    z: 0.0,
+                };
+            }
         }
         let unit_direction = unit_vector(self.direction);
         let t = 0.5 * (unit_direction.y + 1.0);

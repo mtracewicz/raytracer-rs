@@ -7,6 +7,7 @@ use std::{
 use camera::Camera;
 use helpers::random_f32;
 use hittable::{Hittable, Sphere};
+use material::material::{Lambertian, Material, Metal};
 use vec3::Point3;
 
 use crate::{
@@ -16,6 +17,7 @@ use crate::{
 mod camera;
 mod helpers;
 mod hittable;
+mod material;
 mod ppm;
 mod ray;
 mod vec3;
@@ -45,6 +47,35 @@ fn main() -> Result<(), Box<dyn error::Error>> {
         (image_width * image_height) as usize
     ]));
 
+    let material_ground: Arc<Box<dyn Material + Send + Sync>> = Arc::new(Box::new(Lambertian {
+        albedo: Color {
+            x: 0.8,
+            y: 0.8,
+            z: 0.0,
+        },
+    }));
+    let material_center: Arc<Box<dyn Material + Send + Sync>> = Arc::new(Box::new(Lambertian {
+        albedo: Color {
+            x: 0.7,
+            y: 0.7,
+            z: 0.3,
+        },
+    }));
+    let material_left: Arc<Box<dyn Material + Send + Sync>> = Arc::new(Box::new(Metal {
+        albedo: Color {
+            x: 0.8,
+            y: 0.8,
+            z: 0.8,
+        },
+    }));
+    let material_right: Arc<Box<dyn Material + Send + Sync>> = Arc::new(Box::new(Metal {
+        albedo: Color {
+            x: 0.8,
+            y: 0.6,
+            z: 0.2,
+        },
+    }));
+
     let world: Arc<Vec<Box<dyn Hittable + Sync + Send>>> = Arc::new(vec![
         Box::new(Sphere {
             center: Point3 {
@@ -53,6 +84,25 @@ fn main() -> Result<(), Box<dyn error::Error>> {
                 z: -1.0,
             },
             radius: 0.5,
+            material: Arc::clone(&material_center),
+        }),
+        Box::new(Sphere {
+            center: Point3 {
+                x: -1.0,
+                y: 0.0,
+                z: -1.0,
+            },
+            radius: 0.5,
+            material: Arc::clone(&material_left),
+        }),
+        Box::new(Sphere {
+            center: Point3 {
+                x: 1.0,
+                y: 0.0,
+                z: -1.0,
+            },
+            radius: 0.5,
+            material: Arc::clone(&material_right),
         }),
         Box::new(Sphere {
             center: Point3 {
@@ -61,6 +111,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
                 z: -1.0,
             },
             radius: 100.0,
+            material: Arc::clone(&material_ground),
         }),
     ]);
 

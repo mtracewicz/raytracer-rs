@@ -15,6 +15,14 @@ impl Vec3 {
     pub fn len_squared(&self) -> f32 {
         self.x * self.x + self.y * self.y + self.z * self.z
     }
+
+    pub fn near_zero(&self) -> bool {
+        let error = 1e-8;
+        self.x.abs() < error && self.y.abs() < error && self.z.abs() < error
+    }
+}
+pub fn reflect(v: &Vec3, n: &Vec3) -> Vec3 {
+    *v - 2.0 * dot_product(*v, *n) * *n
 }
 
 pub type Point3 = Vec3;
