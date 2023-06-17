@@ -90,6 +90,15 @@ fn main() -> Result<(), Box<dyn error::Error>> {
         }),
         Box::new(Sphere {
             center: Point3 {
+                x: -1.0,
+                y: 0.0,
+                z: -1.0,
+            },
+            radius: -0.4,
+            material: Arc::clone(&material_left),
+        }),
+        Box::new(Sphere {
+            center: Point3 {
                 x: 1.0,
                 y: 0.0,
                 z: -1.0,
