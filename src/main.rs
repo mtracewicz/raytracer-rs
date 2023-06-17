@@ -67,6 +67,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
             y: 0.8,
             z: 0.8,
         },
+        fuzzines: 0.3,
     }));
     let material_right: Arc<Box<dyn Material + Send + Sync>> = Arc::new(Box::new(Metal {
         albedo: Color {
@@ -74,6 +75,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
             y: 0.6,
             z: 0.2,
         },
+        fuzzines: 1.0,
     }));
 
     let world: Arc<Vec<Box<dyn Hittable + Sync + Send>>> = Arc::new(vec![
