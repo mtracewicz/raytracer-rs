@@ -32,24 +32,30 @@ fn main() -> Result<(), Box<dyn error::Error>> {
     let aspect_ratio: f32 = 16.0 / 9.0;
     let image_height = ((image_width as f32) / aspect_ratio) as i32;
     let samples_per_pixel = 100;
+    let look_from = Point3 {
+        x: 3.0,
+        y: 3.0,
+        z: 2.0,
+    };
+    let look_at = Point3 {
+        x: 0.0,
+        y: 0.0,
+        z: -1.0,
+    };
+    let dist_to_focus = (look_from - look_at).len();
+    let aperture = 2.0;
     let camera = Camera::new(
-        Point3 {
-            x: -2.0,
-            y: 2.0,
-            z: 1.0,
-        },
-        Point3 {
-            x: 0.0,
-            y: 0.0,
-            z: -1.0,
-        },
+        look_from,
+        look_at,
         Vec3 {
             x: 0.0,
             y: 1.0,
             z: 0.0,
         },
-        90.0,
+        20.0,
         aspect_ratio,
+        aperture,
+        dist_to_focus,
     );
     let max_depth = 50;
 

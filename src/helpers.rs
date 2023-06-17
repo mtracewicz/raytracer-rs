@@ -1,4 +1,4 @@
-use crate::vec3::{dot_product, unit_vector, Vec3};
+use crate::vec3::{dot_product, Vec3};
 
 pub fn degrees_to_radians(degrees: f32) -> f32 {
     degrees * std::f32::consts::PI / 180.0
@@ -30,8 +30,18 @@ pub fn random_in_unit_sphere() -> Vec3 {
     }
 }
 
-pub fn random_unit_vector() -> Vec3 {
-    unit_vector(random_in_unit_sphere())
+pub fn random_in_unit_disk() -> Vec3 {
+    loop {
+        let p = Vec3 {
+            x: random_f32_in_range(-1.0, 1.0),
+            y: random_f32_in_range(-1.0, 1.0),
+            z: 0.0,
+        };
+        if p.len_squared() >= 1.0 {
+            continue;
+        }
+        return p;
+    }
 }
 
 pub fn random_in_hemisphere(normal: Vec3) -> Vec3 {

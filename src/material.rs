@@ -6,7 +6,7 @@ use crate::{
 };
 
 pub trait Material {
-    fn scatter(&self, ray: &Ray, hit_record: &HitRecord) -> Option<(Color, Ray)> {
+    fn scatter(&self, _ray: &Ray, _hit_record: &HitRecord) -> Option<(Color, Ray)> {
         None
     }
 }
@@ -16,7 +16,7 @@ pub struct Lambertian {
 }
 
 impl Material for Lambertian {
-    fn scatter(&self, ray: &Ray, hit_record: &HitRecord) -> Option<(Color, Ray)> {
+    fn scatter(&self, _ray: &Ray, hit_record: &HitRecord) -> Option<(Color, Ray)> {
         let mut scatter_direction = hit_record.normal + random_in_hemisphere(hit_record.normal);
         if scatter_direction.near_zero() {
             scatter_direction = hit_record.normal;
